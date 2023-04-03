@@ -79,52 +79,62 @@
         {% for project in projects %}
             {% if request.args.get('search') is not none and request.args.get('search') in project.description %}
             <tr>
-                <td>{{ project.id }}</td>
-                <td>{{ project.description }}</td>
-                <td>{{ project.init }}</td>
-                <td>{{ project.end }}</td>
-                <td>{% if project.status == 0 %}Inactive{% else %}Active{% endif %}</td>
-                <td>
-                    <a href="/start/manager/modify_project.html?id={{ project.id }}" class="btn btn-primary btn-sm">Modify</a>
-                    {% if project.status == 0 %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-success btn-sm" type="submit" name="activate" value="{{ project.id }}">Activate</button>
-                    </form>
-                    {% else %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-warning btn-sm" type="submit" name="deactivate" value="{{ project.id }}">Deactivate</button>
-                    </form>
-                    {% endif %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project.id }}">Delete</button>
-                    </form>
-                </td>
-            </tr>
+              <td>{{ project.id }}</td>
+              <td>{{ project.description }}</td>
+              <td>{{ project.init }}</td>
+              <td>{{ project.end }}</td>
+              <td>{% if project.status == 0 %}Inactive{% else %}Active{% endif %}</td>
+              <td>
+                  <a href="/start/manager/modify_project.html?id={{ project.id }}" class="btn btn-primary btn-sm">
+                      &#x1F589; Modify
+                  </a>
+                  <a href="/start/manager/project_details.html?id={{ project.id }}" class="btn btn-info btn-sm">
+                      &#x1F50D; Details
+                  </a>
+                  {% if project.status == 0 %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-success btn-sm" type="submit" name="activate" value="{{ project.id }}">Activate</button>
+                  </form>
+                  {% else %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-warning btn-sm" type="submit" name="deactivate" value="{{ project.id }}">Deactivate</button>
+                  </form>
+                  {% endif %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project.id }}">Delete</button>
+                  </form>
+              </td>
+          </tr>
             {% endif %}
 
             {% if request.args.get('search') is none %}
             <tr>
-                <td>{{ project.id }}</td>
-                <td>{{ project.description }}</td>
-                <td>{{ project.init }}</td>
-                <td>{{ project.end }}</td>
-                <td>{% if project.status == 0 %}Inactive{% else %}Active{% endif %}</td>
-                <td>
-                    <a href="/start/manager/modify_project.html?id={{ project.id }}" class="btn btn-primary btn-sm">Modify</a>
-                    {% if project.status == 0 %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-success btn-sm" type="submit" name="activate" value="{{ project.id }}">Activate</button>
-                    </form>
-                    {% else %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-warning btn-sm" type="submit" name="deactivate" value="{{ project.id }}">Deactivate</button>
-                    </form>
-                    {% endif %}
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project.id }}">Delete</button>
-                    </form>
-                </td>
-            </tr>
+              <td>{{ project.id }}</td>
+              <td>{{ project.description }}</td>
+              <td>{{ project.init }}</td>
+              <td>{{ project.end }}</td>
+              <td>{% if project.status == 0 %}Inactive{% else %}Active{% endif %}</td>
+              <td>
+                  <a href="/start/manager/modify_project.html?id={{ project.id }}" class="btn btn-primary btn-sm">
+                      &#x1F589; Modify
+                  </a>
+                  <a href="/start/manager/project_details.html?id={{ project.id }}" class="btn btn-info btn-sm">
+                      &#x1F50D; Details
+                  </a>
+                  {% if project.status == 0 %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-success btn-sm" type="submit" name="activate" value="{{ project.id }}">Activate</button>
+                  </form>
+                  {% else %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-warning btn-sm" type="submit" name="deactivate" value="{{ project.id }}">Deactivate</button>
+                  </form>
+                  {% endif %}
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project.id }}">Delete</button>
+                  </form>
+              </td>
+          </tr>
             {% endif %}
         {% endfor %}
         </tbody>

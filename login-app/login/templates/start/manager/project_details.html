@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="#">Tools:</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="approve">Approve and Assign Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="create_user">Create and Manage Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="modify_users.html">Modify or Delete Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/start/analist/client_register.html">Client Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/start/admin/logger.html">Logger</a>
+        </li>
+        
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link">Logged as: {{ g.user['role'] }}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<h1>Project Data</h1>
+		<form method="POST">
+            <div class="form-group">
+                <select class="form-control" name="car">
+                  {% for car in cars %}
+                    <option value="{{ car.plaque }}">{{ car.plaque }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <select class="form-control" name="department">
+                  {% for department in departments %}
+                    <option value="{{ department.name }}">{{ department.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <select class="form-control" name="manager">
+                  {% for manager in managers %}
+                    <option value="{{ user.dni }}">{{ user.dni }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+			<div class="form-group">
+				<label for="problem">Problem:</label>
+				<input type="text" class="form-control" id="problem" name="problem" required>
+			</div>
+			<div class="form-group">
+				<label for="solution">Solution:</label>
+				<input type="text" class="form-control" id="solution" name="solution" required>
+			</div>
+            <div class="form-group">
+				<label for="ammount">Ammount ($):</label>
+				<input type="number" class="form-control" id="ammount" name="ammount" required>
+			</div>
+            <div class="form-group">
+				<label for="obs">Additional Details:</label>
+				<input type="text" class="form-control" id="obs" name="obs">
+			</div>
+			<button type="submit" class="btn btn-primary">Add to Project</button>
+		</form>
+	</div>
+
+    <div class="container">
+    <form method="GET" class="form-inline">
+        <div class="form-group">
+            <label for="search">Search by plaque:</label>
+            <input type="text" class="form-control" id="search" name="search" value="{{ request.args.get('search') }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <br>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Plaque</th>
+            <th>Department</th>
+            <th>Manager</th>
+            <th>Problem</th>
+            <th>Solution</th>
+            <th>Ammount</th>
+            <th>Additional Details</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for project_detail in project_details %}
+            {% if request.args.get('search') is not none and request.args.get('search') in project_detail.car_id %}
+            <tr>
+              <td>{{ project_detail.id }}</td>
+              <td>{{ project_detail.car_id }}</td>
+              <td>{{ project_detail.department }}</td>
+              <td>{{ project_detail.manager }}</td>
+              <td>{{ project_detail.problem }}</td>
+              <td>{{ project_detail.solution }}</td>
+              <td>{{ project_detail.ammount }}</td>
+              <td>{{ project_detail.obs }}</td>
+              <td>
+                  <a class="btn btn-primary btn-sm">
+                      Presupuesto
+                  </a>
+                  <a href="/start/manager/project_details_modify.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
+                      Modify
+                  </a>
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project_detail.id }}">Delete</button>
+                  </form>
+              </td>
+          </tr>
+            {% endif %}
+
+            {% if request.args.get('search') is none %}
+            <tr>
+                <td>{{ project_detail.id }}</td>
+                <td>{{ project_detail.car_id }}</td>
+                <td>{{ project_detail.department }}</td>
+                <td>{{ project_detail.manager }}</td>
+                <td>{{ project_detail.problem }}</td>
+                <td>{{ project_detail.solution }}</td>
+                <td>{{ project_detail.ammount }}</td>
+                <td>{{ project_detail.obs }}</td>
+                <td>
+                    <a class="btn btn-primary btn-sm">
+                        Presupuesto
+                    </a>
+                    <a href="/start/manager/project_details_modify.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
+                        Modify
+                    </a>
+                    <form method="POST" style="display: inline;">
+                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project_detail.id }}">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

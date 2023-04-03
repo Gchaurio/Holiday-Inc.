@@ -142,6 +142,80 @@ def create_project():
     ).fetchall()
     return render_template('/start/admin/create_project.html', projects=projects)
 
+@bp.route('/start/admin/create_departments.html', methods=('POST', 'GET'))
+@login_required
+@root_required
+def create_department():
+
+    db = get_db()
+    error = None
+
+    if request.method == 'POST':
+        if 'department' in request.form:
+            name = request.form['name']
+            try:
+                db.execute(
+                    "INSERT INTO department (name) VALUES (?)", 
+                    (name),
+                )
+                db.commit()
+                logger_register(f'Department "{name}", created.', g.user['username'])
+            except db.IntegrityError:
+                error = f"Department {name} is already created."
+                flash(error)
+
+        elif 'delete' in request.form:
+            id = request.form['delete']
+            db.execute(
+                'DELETE FROM department WHERE id = ?',
+                (id,)
+            )
+            '''db.execute(
+                'UPDATE user SET project = -2 WHERE project = ?',
+                (id,)
+            )'''
+            db.commit()
+            logger_register(f'Department with id "{id}", deleted.', g.user['username'])
+            #logger_register(f'All users related to project with id "{id}", has been asigned with no projects.', g.user['username'])
+
+    db = get_db()
+    departments = db.execute(
+        'SELECT * FROM department'
+    ).fetchall()
+    return render_template('/start/admin/create_departments.html', departments=departments)
+
+@bp.route('/start/admin/modify_departments.html', methods=('POST', 'GET'))
+@login_required
+@root_required
+def modify_departments():
+
+    db = get_db()
+    error = None
+    dep_id = request.args.get('id')
+    if dep_id is None:
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        if 'name' in request.form:
+            name = request.form['name']
+            try:
+                db.execute(
+                    'UPDATE department SET name = ?',
+                    (name),
+                )
+                db.commit()
+                logger_register(f"Department name with id {dep_id} updated in database.", g.user['username'])
+                db = get_db()
+                if g.user['role'] == 'admin':
+                    return redirect(url_for('start.create_department'))
+            except db.IntegrityError:
+                error = f"Department with id {dep_id} could not be updated in database."
+                flash(error)
+    
+    department = db.execute(
+        'SELECT * FROM department WHERE id = ?', (dep_id,)
+    ).fetchall()
+    return render_template('/start/manager/modify_departments.html', department=department)
+
 
 @bp.route('/start/manager/modify_project.html', methods=('POST', 'GET'))
 @login_required
@@ -178,6 +252,72 @@ def modify_project():
         'SELECT * FROM project WHERE id = ?', (project_id,)
     ).fetchall()
     return render_template('/start/manager/modify_project.html', project=project)
+
+@bp.route('/start/manager/project_details.html', methods=('POST', 'GET'))
+@login_required
+@manager_required
+def project_details():
+
+    db = get_db()
+    error = None
+    project_id = request.args.get('id')
+    if project_id is None:
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        if 'add_project' in request.form:
+            car_id = request.form['car_id']
+            department = request.form['department']
+            manager = request.form['manager']
+            problem = request.form['problem']
+            solution = request.form['solution']
+            amount = request.form['amount']
+            obs = request.form['obs']
+            try:
+                db.execute(
+                    'INSERT INTO project_info (project_id, car_id, department, manager, problem, solution, ammount, obs) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (project_id, car_id, department, manager, problem, solution, amount, obs)
+                )
+                db.commit()
+                logger_register(f"Project part for the car with plaque {car_id} added to database.", g.user['username'])
+                if g.user['role'] == 'admin':
+                    return redirect(url_for('start.create_project'))
+                else:
+                    return redirect(url_for('start.manager_project'))
+            except db.IntegrityError:
+                error = f"Project part for the car with plaque  {car_id} could not be added to database."
+                flash(error)
+        elif 'delete_project' in request.form:
+            project_info_id = request.form['project_info_id']
+            db.execute(
+                'DELETE FROM project_info WHERE id = ?',
+                (project_info_id,)
+            )
+            db.commit()
+            logger_register(f'Project with id "{project_info_id}", deleted.', g.user['username'])
+        else:
+            error = "Invalid action"
+            flash(error)
+
+    cars = db.execute(
+        'SELECT * FROM car'
+    ).fetchall()
+    
+    departments = db.execute(
+        'SELECT * FROM department'
+    ).fetchall()
+    
+
+    managers = db.execute(
+        "SELECT * FROM user WHERE role = 'Gerente de Operaciones' or role = 'Supervisor del área de Mecánica General' or role = 'Supervisor del área de Latonería y Pintura' or role = 'Especialistas en Mecánica' or role = 'Especialistas en Electrónica' or role = 'Especialistas en Electricidad' or role = 'Analista de Operaciones'"
+    ) .fetchall()
+
+    project_info = db.execute(
+        'SELECT * FROM project_info WHERE project_id = ?', (project_id,)
+    ).fetchall()
+
+    return render_template('/start/manager/modify_project.html', project_id=project_id, cars=cars, project_info=project_info, departments=departments, managers=managers )
+
 
 
 @bp.route('/start/manager/manager_project.html', methods=('POST', 'GET'))
