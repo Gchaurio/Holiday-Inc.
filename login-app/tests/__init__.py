@@ -14,7 +14,7 @@ class AppTest(unittest.TestCase):
     def setUp(self) -> None:
         self.app = create_app()
         self.client = self.app.test_client()
-        self.driver = webdriver.Chrome()
+        #self.driver = webdriver.Chrome()
         with self.app.app_context():
             try: 
                 init_db_command()
@@ -25,5 +25,5 @@ class AppTest(unittest.TestCase):
     def tearDown(self):
         with self.app.app_context():
             close_db()
-        self.driver.close()    
+        #self.driver.close()    
 

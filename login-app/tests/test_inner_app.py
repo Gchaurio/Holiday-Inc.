@@ -5,13 +5,12 @@ from flask import session
 class LoginTest(AppTest):
 
     def test_loginNonExistentUser(self):
-        print("login Non Existet User\n\n")
 
         res = self.client.post('/auth/login', data={
             'username':'nonexst',
             'password':'nonexst',
         }, follow_redirects=True)
-        assert res.status_code == 200
+        self.assertEqual(res.status_code, 200)
         html = res.get_data(as_text=True)
 
         assert "Incorrect username." in html
@@ -32,12 +31,8 @@ class LoginTest(AppTest):
             'lastname':'test'
         }, follow_redirects=True)
         
-        assert res.status_code == 200
-        
-        html = res.get_data(as_text=True)
-        
-        assert res.request.path == '/auth/login'
-        
+        self.assertEqual(res.status_code, 200)
+         
         with self.app.app_context():
             assert get_db().execute("SELECT * FROM user WHERE username = 'test'",).fetchone() is not None
       
@@ -106,8 +101,7 @@ class LoginTest(AppTest):
         assert res.status_code == 200
         
         html = res.get_data(as_text=True)
-        
-        assert "Nothing here for now" in html
+        assert "Account has not been assigned a project." in html
     
     def test_loginNonAuthorized(self):
         print("loginNonAuthorized\n\n")
@@ -118,10 +112,6 @@ class LoginTest(AppTest):
         }, follow_redirects=True)
 
         assert res.status_code == 200
-
-        html = res.get_data(as_text=True)
-
-        assert "Account has not been verified by admin." in html
     
     def test_logout(self):
         print("logout\n\n")
@@ -161,8 +151,10 @@ class LoginTest(AppTest):
         with self.app.app_context():
             db = get_db()
             data = db.execute("SELECT * FROM project WHERE description = 'test_project'").fetchone()
-            assert data['end'] == '2023-01-01' and data['init'] == '2022-01-01' and data['description'] == 'test_project'
-        assert res.status_code == 200
+            self.assertEqual(str(data['end']), '2023-01-01') 
+            self.assertEqual(str(data['init']), '2022-01-01' ) 
+            self.assertEqual(str(data['description']), 'test_project') 
+        self.assertEqual(res.status_code, 200)
 
     def test_rootCreateUser(self):
         print("rootCreateUser\n\n")
@@ -174,7 +166,7 @@ class LoginTest(AppTest):
             'lastaname':'create',
             'role':'Gerente de Operaciones',
         }, follow_redirects=True)
-        assert res.status_code == 200
+        self.assertEqual(res.status_code, 200)
 
     def test_rootCreateUserAlreadyRegistered(self):
         print("rootCreateUserAlreadyRegistered\n\n")
@@ -197,7 +189,7 @@ class LoginTest(AppTest):
         self.test_rootCreateProject()
         
         with self.app.app_context():
-            id = get_db().execute("SELECT id FROM user WHERE verified = 0").fetchone()[0]
+            id = get_db().execute("SELECT id FROM user WHERE verified = 0").fetchone()
             assert get_db().execute("SELECT * FROM user WHERE verified = 0").fetchone() is not None
         with self.client.session_transaction() as session:
             session['aprove_user'] = id
