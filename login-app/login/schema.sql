@@ -64,11 +64,11 @@ CREATE TABLE department(
 CREATE TABLE project_info(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   project_id INTEGER NOT NULL,
-  car_id INTEGER UNIQUE NOT NULL,
+  car_id TEXT NOT NULL,
   department TEXT NOT NULL,
-  manager TEXT NOT NULL,
+  manager INTEGER NOT NULL,
   problem TEXT NOT NULL,
   solution TEXT NOT NULL,
-  ammount INTEGER NOT NULL,
+  ammount REAL NOT NULL,
   obs TEXT
 );

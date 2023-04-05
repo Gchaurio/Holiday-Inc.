@@ -28,24 +28,55 @@
 
 
 {% block content %}
-{% for project in project %}
-	<div class="container">
-		<h1>Edit Project</h1>
-		<form method="POST">
-			<div class="form-group">
-				<label for="description">Description:</label>
-				<input type="text" class="form-control" id="description" name="description" value="{{ project.description }}" required>
-			</div>
-			<div class="form-group">
-				<label for="init">Init Date:</label>
-				<input type="date" class="form-control" id="init" name="init" value="{{ project.init }}" required>
-			</div>
-			<div class="form-group">
-				<label for="end">End Date:</label>
-				<input type="date" class="form-control" id="end" name="end" value="{{ project.end }}" required>
-			</div>
-			<button type="submit" class="btn btn-primary">Update Project</button>
-		</form>
-	</div>
+{% for project in project_info %}
+  <div class="container">
+    <h1>Modify Project Part</h1>
+    <form method="POST">
+      <div class="form-group">
+        <label for="problem">Car:</label>
+          <select class="form-control" name="car">
+            {% for car in cars %}
+              <option value="{{ car.plaque }}">Plaque: {{ car.plaque }} / Model: {{ car.brand }} / Owner: {{ car.owner }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="problem">Department:</label>
+          <select class="form-control" name="department">
+            {% for department in departments %}
+              <option value="{{ department.name }}">{{ department.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="problem">Manager:</label>
+          <select class="form-control" name="manager">
+            {% for manager in managers %}
+              <option value="{{ manager.id }}">
+                {{ manager.role }} - {{ manager.firstname }} {{ manager.lastname }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+<div class="form-group">
+  <label for="problem">Problem:</label>
+  <input type="text" class="form-control" id="problem" name="problem" value="{{ project.problem }}" required>
+</div>
+<div class="form-group">
+  <label for="solution">Solution:</label>
+  <input type="text" class="form-control" id="solution" name="solution" value="{{ project.solution }}" required>
+</div>
+      <div class="form-group">
+  <label for="amount">Amount ($):</label>
+  <input type="number" class="form-control" id="amount" name="amount" value="{{ project.ammount }}" required>
+</div>
+      <div class="form-group">
+  <label for="obs">Additional Details:</label>
+  <input type="text" class="form-control" id="obs" name="obs" value="{{ project.obs }}">
+</div>
+<input type="hidden" name="modify_project_detail" value='None'>
+<button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+</div>
 {% endfor %}
 {% endblock %}

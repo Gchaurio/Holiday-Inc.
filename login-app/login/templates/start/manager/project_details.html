@@ -2,29 +2,21 @@
 
 {% block header %}
   <nav class="navbar navbar-expand-md navbar-light bg-light">
-    <a class="navbar-brand" href="#">Tools:</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="approve">Approve and Assign Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="create_user">Create and Manage Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="modify_users.html">Modify or Delete Users</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/start/analist/client_register.html">Client Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/start/admin/logger.html">Logger</a>
-        </li>
-        
-      </ul>
+        {% if g.user['role'] == 'admin' %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/start/admin/create_project">Manage Projects</a>
+            </li>
+        </ul>
+        {% endif %}
+        {% if g.user['role'] == 'Gerente de Operaciones' %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="manager_project.html">Manage Projects</a>
+            </li>
+        </ul>
+        {% endif %}
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           <a class="nav-link">Logged as: {{ g.user['role'] }}</a>
@@ -34,18 +26,22 @@
   </nav>
 {% endblock %}
 
+
 {% block content %}
+{% for project in project %}
 	<div class="container">
-		<h1>Project Data</h1>
+		<h1>Project: {{ project.description }}    ({{ project.init }} / {{ project.end }})</h1>
 		<form method="POST">
             <div class="form-group">
+              <label for="problem">Car:</label>
                 <select class="form-control" name="car">
                   {% for car in cars %}
-                    <option value="{{ car.plaque }}">{{ car.plaque }}</option>
+                    <option value="{{ car.plaque }}">Plaque: {{ car.plaque }} / Model: {{ car.brand }} / Owner: {{ car.owner }}</option>
                   {% endfor %}
                 </select>
               </div>
               <div class="form-group">
+                <label for="problem">Department:</label>
                 <select class="form-control" name="department">
                   {% for department in departments %}
                     <option value="{{ department.name }}">{{ department.name }}</option>
@@ -53,9 +49,12 @@
                 </select>
               </div>
               <div class="form-group">
+                <label for="problem">Manager:</label>
                 <select class="form-control" name="manager">
                   {% for manager in managers %}
-                    <option value="{{ user.dni }}">{{ user.dni }}</option>
+                    <option value="{{ manager.id }}">
+                      {{ manager.role }} - {{ manager.firstname }} {{ manager.lastname }}
+                    </option>
                   {% endfor %}
                 </select>
               </div>
@@ -68,13 +67,14 @@
 				<input type="text" class="form-control" id="solution" name="solution" required>
 			</div>
             <div class="form-group">
-				<label for="ammount">Ammount ($):</label>
-				<input type="number" class="form-control" id="ammount" name="ammount" required>
+				<label for="amount">Amount ($):</label>
+				<input type="number" class="form-control" id="amount" name="amount" required>
 			</div>
             <div class="form-group">
 				<label for="obs">Additional Details:</label>
 				<input type="text" class="form-control" id="obs" name="obs">
 			</div>
+      <input type="hidden" name="add_project" value='None'>
 			<button type="submit" class="btn btn-primary">Add to Project</button>
 		</form>
 	</div>
@@ -94,17 +94,16 @@
             <th>ID</th>
             <th>Plaque</th>
             <th>Department</th>
-            <th>Manager</th>
+            <th>Manager ID</th>
             <th>Problem</th>
             <th>Solution</th>
-            <th>Ammount</th>
+            <th>Amount</th>
             <th>Additional Details</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        {% for project_detail in project_details %}
-            {% if request.args.get('search') is not none and request.args.get('search') in project_detail.car_id %}
+        {% for project_detail in project_info %}
             <tr>
               <td>{{ project_detail.id }}</td>
               <td>{{ project_detail.car_id }}</td>
@@ -115,10 +114,13 @@
               <td>{{ project_detail.ammount }}</td>
               <td>{{ project_detail.obs }}</td>
               <td>
-                  <a class="btn btn-primary btn-sm">
-                      Presupuesto
-                  </a>
-                  <a href="/start/manager/project_details_modify.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
+                <form method="POST">
+                  <input type="hidden" name="project_id" value="{{ project_detail.project_id }}">
+                  <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#budgetModal">
+                      Budget
+                  </button>
+              </form>
+                  <a href="/start/manager/modify_project.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
                       Modify
                   </a>
                   <form method="POST" style="display: inline;">
@@ -126,33 +128,9 @@
                   </form>
               </td>
           </tr>
-            {% endif %}
-
-            {% if request.args.get('search') is none %}
-            <tr>
-                <td>{{ project_detail.id }}</td>
-                <td>{{ project_detail.car_id }}</td>
-                <td>{{ project_detail.department }}</td>
-                <td>{{ project_detail.manager }}</td>
-                <td>{{ project_detail.problem }}</td>
-                <td>{{ project_detail.solution }}</td>
-                <td>{{ project_detail.ammount }}</td>
-                <td>{{ project_detail.obs }}</td>
-                <td>
-                    <a class="btn btn-primary btn-sm">
-                        Presupuesto
-                    </a>
-                    <a href="/start/manager/project_details_modify.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
-                        Modify
-                    </a>
-                    <form method="POST" style="display: inline;">
-                        <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ project_detail.id }}">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endif %}
         {% endfor %}
         </tbody>
     </table>
     </div>
+  {% endfor %}
 {% endblock %}

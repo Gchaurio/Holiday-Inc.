@@ -13,7 +13,7 @@
         {% if g.user['role'] == 'Gerente de Operaciones' %}
         <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="create_project">Manage Projects</a>
+              <a class="nav-link" href="manager_project.html">Manage Projects</a>
             </li>
         </ul>
         {% endif %}
@@ -28,15 +28,23 @@
 
 
 {% block content %}
-{% for department in department %}
+{% for project in project %}
 	<div class="container">
-		<h1>Edit Department</h1>
+		<h1>Edit Project</h1>
 		<form method="POST">
 			<div class="form-group">
-				<label for="description">Name:</label>
-				<input type="text" class="form-control" id="description" name="description" value="{{ department.name }}" required>
+				<label for="description">Description:</label>
+				<input type="text" class="form-control" id="description" name="description" value="{{ project.description }}" required>
 			</div>
-			<button href="/start/admin/create_departments.html" type="submit" class="btn btn-primary">Update Department</button>
+			<div class="form-group">
+				<label for="init">Init Date:</label>
+				<input type="date" class="form-control" id="init" name="init" value="{{ project.init }}" required>
+			</div>
+			<div class="form-group">
+				<label for="end">End Date:</label>
+				<input type="date" class="form-control" id="end" name="end" value="{{ project.end }}" required>
+			</div>
+			<button type="submit" class="btn btn-primary">Update Project</button>
 		</form>
 	</div>
 {% endfor %}

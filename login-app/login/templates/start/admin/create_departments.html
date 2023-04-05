@@ -50,7 +50,7 @@
     <h2>Existing Departments</h2>
     <form method="GET" class="form-inline">
         <div class="form-group">
-            <label for="search">Search:</label>
+            <label for="search">Search by department name:</label>
             <input type="text" class="form-control" id="search" name="search" value="{{ request.args.get('search') }}">
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
@@ -71,7 +71,7 @@
                 <td>{{ department.id }}</td>
                 <td>{{ department.name }}</td>
                 <td>
-                    <a href="/start/manager/modify_department.html?id={{ department.id }}" class="btn btn-primary btn-sm">Modify</a>
+                    <a href="/start/admin/modify_departments.html?id={{ department.id }}" class="btn btn-primary btn-sm">Modify</a>
                     <form method="POST" style="display: inline;">
                         <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ department.id }}">Delete</button>
                     </form>
@@ -84,7 +84,7 @@
                 <td>{{ department.id }}</td>
                 <td>{{ department.name }}</td>
                 <td>
-                    <a href="/start/manager/modify_department.html?id={{ department.id }}" class="btn btn-primary btn-sm">Modify</a>
+                    <a href="/start/admin/modify_departments.html?id={{ department.id }}" class="btn btn-primary btn-sm">Modify</a>
                     <form method="POST" style="display: inline;">
                         <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ department.id }}">Delete</button>
                     </form>
