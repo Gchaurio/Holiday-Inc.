@@ -1,4 +1,8 @@
 # flask-login-app
+
+Miguel Perez, 15-11126
+Gabriel Chaurio, 17-10126
+
 Flask Login App
 
 # Activar el venv con 'source ./bin/activate'
@@ -16,16 +20,19 @@ ENE-MAR 2023.
 
 El producto de software resultante y demás artefactos entregables derivados del proyecto
 para los períodos antes mencionado realizado por el equipo MPGC bajo la supervisión del
-profesor Jean Carlos Guzmán, se rigen bajo la Licencia de Software Libre GNU (General
+profesor Jean Carlos Guzmán (jguzman106@gmail.com) , se rigen bajo la Licencia de Software Libre GNU (General
 Public License) y se autoriza que el material pueda ser utilizado con fines académicos y
 docentes de la Universidad Simón Bolívar, contemplando la posibilidad de su futura
 utilización en el abordaje de proyectos de Gestion de Empresas en la USB.
 
+El metodo de programacion utilizado es el metodo agil eXtreme programming. 
+El proyecto fue completado en un total de 4 iteraciones.
+
 
 # Iteracion 1:
  Como Sistema, puedo Identificar a Usuarios para Controlar el Acceso No Autorizado al Sistema(Épica).
-  a.Como Sistema, puedoAutenticar Usuarios para Controlare lAccesoNoAutorizadoalSistema(INVEST).
-  b. Como Administrador,puedoCrearperfilesdeUsuariosparaControlardeAccesoNoAutorizadoalSistema(INVEST).
+  a. Como Sistema, puedo Autenticar Usuarios para Controlar el Acceso No Autorizado al Sistema(INVEST).
+  b. Como Administrador,puedo Crearperfiles de Usuarios para Controlar de Acceso No Autorizado al Sistema(INVEST).
   c. Como Administrador,puedoIngresarRolesalosUsuariosparaControlarelAccesoNoAutorizadoalSistema(INVEST).
   Nota: -Autenticar Usuarios implica un algoritmo de encriptación.
         -Crear Perfiles implica Agregar, Buscar, Modificar, Pausar, Eliminar y Descargar datos de un proyecto en particular.
@@ -33,8 +40,8 @@ utilización en el abordaje de proyectos de Gestion de Empresas en la USB.
  
 # Iteracion 2:
   Como Analista de Operaciones, puedo Ingresar los datos de identificación del Vehículo que ingresa al taller para Registrar a los Vehículos de los Clientes del taller en el Sistema (Épica).
-    a Como AnalistadeOperaciones,puedoIngresarlosdatospersonalesdediferentesclientesdeltallerparaRegistraralosVehículosdelosClientesdeltallerenelSistema(INVEST).
-        b.ComoAnalistadeOperaciones,puedoIngresarlosdatosdeunvehículoautomotordeunclientedeltallerenparticularparaRegistraralosVehículosdelosClientesdeltallerenelSistema(INVEST).
+    a. Como Analista de Operaciones,puedo Ingresar los datos personales de diferentes clientes del taller para Registrar a los Vehículos de los Clientes del taller en el Sistema(INVEST).
+     b. Como Analista de Operaciones, puedo Ingresar los datos de un vehículo automotor de un cliente del taller en particular para Registrar a los Vehículos de los Clientes del taller en el Sistema(INVEST).
         
 Nota: -Ingresar los datos personales implica Agregar, Buscar, Modificar y Eliminar clientes.
       -Los datos personales implican Cédula, Nombres, Apellidos, Teléfono de Contacto, Dirección.
@@ -44,8 +51,8 @@ Nota: -Ingresar los datos personales implica Agregar, Buscar, Modificar y Elimin
 # Iteracion 3:
   Como Usuario, puedo Generar diferentes proyectos automotrices en el Sistemapara Gestionar el Portafolio de Proyectos de un Taller Automotriz en Particular (Épica).
     a. Como Gerente, puedo Ingresar los parámetros de un Proyecto en el Sistemapara Gestionar el Portafolio de Proyectos de un Taller Automotriz en Particular (INVEST).
-    b. ComoAdministrador,puedoIngresarladescripcióndelosdiferentesdepartamentosdeltallerparaConfigurarlaestructuraorganizacional-operativadeltallerenelSistema(INVEST).
-    c. ComoGerentedeProyectos,puedoIngresarlosdatosdeunproyectoautomotrizdeunclienteenparticularparaGestionarProyectosautomotricesdeltallerenelSistema(INVEST).
+    b. Como Administrador, puedo Ingresar la descripción de los diferentes departamentos del taller para Configurar la estructura organizacional-operativa del taller en el Sistema(INVEST).
+    c. Como Gerente de Proyectos, puedo Ingresar los datos de un proyecto automotriz de un cliente en particular para Gestionar Proyectos automotrices del taller en el Sistema(INVEST).
     
     
     Nota:
