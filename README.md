@@ -1,9 +1,8 @@
-# flask-login-app
+# Flask Login App
 
-Miguel Perez, 15-11126
-Gabriel Chaurio, 17-10126
+# Miguel Perez, 15-11126
+# Gabriel Chaurio, 17-10126
 
-Flask Login App
 
 # Activar el venv con 'source ./bin/activate'
 
