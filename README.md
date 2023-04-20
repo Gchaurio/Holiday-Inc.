@@ -22,18 +22,18 @@ docentes de la Universidad Simón Bolívar, contemplando la posibilidad de su fu
 utilización en el abordaje de proyectos de Gestion de Empresas en la USB.
 
 
-# Itercion 1:
+# Iteracion 1:
  Como Sistema, puedo Identificar a Usuarios para Controlar el Acceso No Autorizado al Sistema(Épica).
-  a.ComoSistema,puedoAutenticarUsuariosparaControlarelAccesoNoAutorizadoalSistema(INVEST).
-  b. ComoAdministrador,puedoCrearperfilesdeUsuariosparaControlardeAccesoNoAutorizadoalSistema(INVEST).
-  c. ComoAdministrador,puedoIngresarRolesalosUsuariosparaControlarelAccesoNoAutorizadoalSistema(INVEST).
+  a.Como Sistema, puedoAutenticar Usuarios para Controlare lAccesoNoAutorizadoalSistema(INVEST).
+  b. Como Administrador,puedoCrearperfilesdeUsuariosparaControlardeAccesoNoAutorizadoalSistema(INVEST).
+  c. Como Administrador,puedoIngresarRolesalosUsuariosparaControlarelAccesoNoAutorizadoalSistema(INVEST).
   Nota: -Autenticar Usuarios implica un algoritmo de encriptación.
         -Crear Perfiles implica Agregar, Buscar, Modificar, Pausar, Eliminar y Descargar datos de un proyecto en particular.
           -Los roles son Gerente de Operaciones, Supervisor del área de Mecánica General, Supervisor del área de Latonería y Pintura, Especialistas en Mecánica,        Especialistas en   Electrónica , Especialistas en Electricidad, etc.
  
 # Iteracion 2:
   Como Analista de Operaciones, puedo Ingresar los datos de identificación del Vehículo que ingresa al taller para Registrar a los Vehículos de los Clientes del taller en el Sistema (Épica).
-    a ComoAnalistadeOperaciones,puedoIngresarlosdatospersonalesdediferentesclientesdeltallerparaRegistraralosVehículosdelosClientesdeltallerenelSistema(INVEST).
+    a Como AnalistadeOperaciones,puedoIngresarlosdatospersonalesdediferentesclientesdeltallerparaRegistraralosVehículosdelosClientesdeltallerenelSistema(INVEST).
         b.ComoAnalistadeOperaciones,puedoIngresarlosdatosdeunvehículoautomotordeunclientedeltallerenparticularparaRegistraralosVehículosdelosClientesdeltallerenelSistema(INVEST).
         
 Nota: -Ingresar los datos personales implica Agregar, Buscar, Modificar y Eliminar clientes.
