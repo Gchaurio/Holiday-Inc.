@@ -748,3 +748,309 @@ def car_modify():
 
     return render_template('/start/analist/car_modify.html', client=client, car=car)
 
+@bp.route('/start/admin/create_metrics.html', methods=('POST', 'GET'))
+@login_required
+@root_required
+def create_metrics():
+
+    db = get_db()
+    error = None
+
+    if request.method == 'POST':
+        if 'unit' in request.form:
+            dimentions = request.form['dimentions']
+            units = request.form['unit']
+            try:
+                db.execute(
+                    "INSERT INTO metrics (dimentions,units) VALUES (?,?)", 
+                    (dimentions,units,)
+                )
+                db.commit()
+                logger_register(f'Metrics "{dimentions + units}", created.', g.user['username'])
+            except db.IntegrityError:
+                error = f"Unexpected error."
+                flash(error)
+
+        elif 'delete' in request.form:
+            id = request.form['delete']
+            db.execute(
+                'DELETE FROM metrics WHERE id = ?',
+                (id,)
+            )
+            db.commit()
+            logger_register(f'Metrics with id "{id}", deleted.', g.user['username'])
+            #logger_register(f'All users related to project with id "{id}", has been asigned with no projects.', g.user['username'])
+
+    db = get_db()
+    metrics = db.execute(
+        'SELECT * FROM metrics'
+    ).fetchall()
+    return render_template('/start/admin/create_metrics.html', metrics=metrics)
+
+@bp.route('/start/admin/modify_metrics.html', methods=('POST', 'GET'))
+@login_required
+@root_required
+def modify_metrics():
+
+    db = get_db()
+    error = None
+    id = request.args.get('id')
+    if id is None:
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        if 'unit' in request.form:
+            dimentions = request.form['dimentions']
+            units = request.form['unit']
+            try:
+                db.execute('UPDATE metrics SET dimentions = ?, units = ? WHERE id = ?', (dimentions, units, id))
+                db.commit()
+                logger_register(f"Metrics with id {id} updated in database.", g.user['username'])
+                db = get_db()
+                if g.user['role'] == 'admin':
+                    return redirect(url_for('start.create_metrics'))
+            except db.IntegrityError:
+                error = f"Metrics with id {id} could not be updated in database."
+                flash(error)
+    
+    metric = db.execute(
+        'SELECT * FROM metrics WHERE id = ?', (id,)
+    ).fetchall()
+    return render_template('/start/admin/modify_metrics.html', metric=metric)
+
+@bp.route('/start/manager/action_plan.html', methods=('POST', 'GET'))
+@login_required
+@manager_required
+def action_plan():
+
+    db = get_db()
+    error = None
+    project_detail_id = request.args.get('project_detail_id')
+    project_id = request.args.get('project_id')
+    if project_id is None or project_detail_id is None:
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST' and 'add_action_plan' in request.form:
+        action = request.form['action']
+        activity = request.form['activity']
+        init = request.form['init']
+        end = request.form['end']
+        category = request.form['category']
+        material = request.form['material']
+        material_quantity = request.form['material_quantity']
+        metric = request.form['metric']
+        material_cost = request.form['material_cost']
+        responsable = request.form['responsable']
+        human_quantity = request.form['human_quantity']
+        hours_quantity = request.form['hours_quantity']
+        payment_per_hour = request.form['human_amount']
+        human_amount = (int(hours_quantity))*int(payment_per_hour)*int(human_quantity)
+        material_amount = int(metric)*int(material_cost)*int(material_quantity)
+
+        try:
+            db.execute(
+                'INSERT INTO action_plan (project_info_id, action, activity, init, end, category, material, metric, human_quantity, hours_quantity, material_quantity, responsable, human_ammount, material_ammount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (project_detail_id, action, activity, init, end, category, material, metric, human_quantity, hours_quantity, material_quantity, responsable, human_amount, material_amount)
+            )
+            db.commit()
+            flash('Action Plan added successfully.', 'success')
+        except:
+            error = 'An error occurred while adding the action plan.'
+            flash(error)
+    elif 'delete' in request.form:
+        action_plan_id = request.form['delete']
+        db.execute(
+            'DELETE FROM action_plan WHERE id = ?',
+            (action_plan_id,)
+        )
+        db.commit()
+        logger_register(f'Action Plan with id "{action_plan_id}", deleted.', g.user['username'])
+
+    
+    project = db.execute(
+        'SELECT * FROM project WHERE id = ?', (project_id,)
+    ).fetchall()
+
+    managers = db.execute(
+        "SELECT * FROM user WHERE role != 'admin' and project = ?", (project_id,)
+    ) .fetchall()
+
+    project_info = db.execute(
+        'SELECT * FROM project_info WHERE project_id = ?', (project_detail_id,)
+    ).fetchall()
+
+    action_plans = db.execute(
+        'SELECT * FROM action_plan WHERE project_info_id = ?', (project_detail_id,)
+    ).fetchall()
+
+    metrics = db.execute(
+        'SELECT * FROM metrics'
+    ).fetchall()
+
+    total_human = 0
+    total_material = 0
+    for action_plan in action_plans:
+        total_human += action_plan[13]
+        total_material += action_plan[14]
+    total = total_human + total_material
+
+    return render_template('/start/manager/action_plan.html', project=project, project_id=project_id, project_info=project_info, managers=managers, action_plans = action_plans, metrics=metrics, total_amount=total, total_amount_material = total_material, total_amount_human = total_human )
+
+@bp.route('/start/manager/action_plan_modify_general.html', methods=('POST', 'GET'))
+@login_required
+@manager_required
+def action_plan_modify_general():
+    db = get_db()
+    action_plan_id = request.args.get('id')
+    action_plan_project_detail_id = request.args.get('action_project_id')
+    project_id = request.args.get('project_id')
+    if (action_plan_id is None) or (action_plan_project_detail_id is None) or (project_id is None):
+        return redirect(url_for("auth.login"))
+
+    if request.method == 'POST':
+        if 'update_general' in request.form:
+            action = request.form['action']
+            activity = request.form['activity']
+            init = request.form['init']
+            end = request.form['end']
+            category = request.form['category']
+            material = request.form['material']
+            material_quantity = request.form['material_quantity']
+            metric = request.form['metric']
+            material_cost = request.form['material_cost']
+            responsable = request.form['responsable']
+            human_quantity = request.form['human_quantity']
+            hours_quantity = request.form['hours_quantity']
+            payment_per_hour = request.form['human_amount']
+            human_amount = (int(hours_quantity))*int(payment_per_hour)*int(human_quantity)
+            material_amount = int(metric)*int(material_cost)*int(material_quantity)
+
+            try:
+                db.execute(
+                    'UPDATE action_plan SET action = ?, activity = ?, init = ?, end = ?, category = ?, material = ?, material_quantity = ?, metric = ?, material_ammount = ?, responsable = ?, human_quantity = ?, hours_quantity = ?, human_ammount = ? WHERE id = ?',
+                    (action, activity, init, end, category, material, material_quantity, metric, material_amount, responsable, human_quantity, hours_quantity, human_amount, action_plan_id))
+                db.commit()
+                logger_register(f"Action plan with id {action_plan_id} updated in database.", g.user['username'])
+                flash("Action Plan updated successfully!", "success")
+                return redirect(url_for("start.action_plan", project_id=project_id, project_detail_id=action_plan_project_detail_id))
+
+            except Exception as e:
+                db.rollback()
+                logger_register(f"Error updating action plan with id {action_plan_id} in database: {e}", g.user['username'])
+                flash("An error occurred while updating the Action Plan.", "danger")
+
+    action_plan = db.execute(
+        'SELECT * FROM action_plan WHERE id = ?',
+        (action_plan_id,)
+    ).fetchone()
+
+    metrics = db.execute(
+        'SELECT * FROM metrics'
+    ).fetchall()
+
+    managers = db.execute(
+    "SELECT * FROM user WHERE role != 'admin' and project = ?", (project_id,)
+    ).fetchall()
+
+    return render_template("/start/manager/action_plan_modify_general.html", action_plan=action_plan, metrics=metrics, managers=managers)
+
+@bp.route('/start/manager/action_plan_modify_human.html', methods=('POST', 'GET'))
+@login_required
+@manager_required
+def action_plan_modify_human():
+    db = get_db()
+    action_plan_id = request.args.get('id')
+    action_plan_project_detail_id = request.args.get('action_project_id')
+    project_id = request.args.get('project_id')
+    if (action_plan_id is None) or (action_plan_project_detail_id is None) or (project_id is None):
+        return redirect(url_for("auth.login"))
+
+    if request.method == 'POST':
+        if 'update_human' in request.form:
+            action = request.form['action']
+            activity = request.form['activity']
+            responsable = request.form['responsable']
+            human_quantity = request.form['human_quantity']
+            hours_quantity = request.form['hours_quantity']
+            payment_per_hour = request.form['human_amount']
+            human_amount = (int(hours_quantity))*int(payment_per_hour)*int(human_quantity)
+
+            try:
+                db.execute(
+                    'UPDATE action_plan SET action = ?, activity = ?, responsable = ?, human_quantity = ?, hours_quantity = ?, human_ammount = ? WHERE id = ?',
+                    (action, activity, responsable, human_quantity, hours_quantity, human_amount, action_plan_id))
+                db.commit()
+                logger_register(f"Action plan (Human Talent) with id {action_plan_id} updated in database.", g.user['username'])
+                flash("Action Plan updated successfully!", "success")
+                return redirect(url_for("start.action_plan", project_id=project_id, project_detail_id=action_plan_project_detail_id))
+
+            except Exception as e:
+                db.rollback()
+                logger_register(f"Error updating action plan with id {action_plan_id} in database: {e}", g.user['username'])
+                flash("An error occurred while updating the Action Plan.", "danger")
+
+    action_plan = db.execute(
+        'SELECT * FROM action_plan WHERE id = ?',
+        (action_plan_id,)
+    ).fetchone()
+
+    metrics = db.execute(
+        'SELECT * FROM metrics'
+    ).fetchall()
+
+    managers = db.execute(
+    "SELECT * FROM user WHERE role != 'admin' and project = ?", (project_id,)
+    ).fetchall()
+
+    return render_template("/start/manager/action_plan_modify_human.html", action_plan=action_plan, metrics=metrics, managers=managers)
+
+@bp.route('/start/manager/action_plan_modify_material.html', methods=('POST', 'GET'))
+@login_required
+@manager_required
+def action_plan_modify_material():
+    db = get_db()
+    action_plan_id = request.args.get('id')
+    action_plan_project_detail_id = request.args.get('action_project_id')
+    project_id = request.args.get('project_id')
+    if (action_plan_id is None) or (action_plan_project_detail_id is None) or (project_id is None):
+        return redirect(url_for("auth.login"))
+
+    if request.method == 'POST':
+        if 'update_material' in request.form:
+            action = request.form['action']
+            activity = request.form['activity']
+            category = request.form['category']
+            material = request.form['material']
+            material_quantity = request.form['material_quantity']
+            metric = request.form['metric']
+            material_cost = request.form['material_cost']
+            responsable = request.form['responsable']
+            material_amount = int(metric)*int(material_cost)*int(material_quantity)
+
+            try:
+                db.execute(
+                    'UPDATE action_plan SET action = ?, activity = ?, category = ?, material = ?, material_quantity = ?, metric = ?, material_ammount = ?, responsable = ? WHERE id = ?',
+                    (action, activity, category, material, material_quantity, metric, material_amount, responsable, action_plan_id))
+                db.commit()
+                logger_register(f"Action plan with id {action_plan_id} updated in database.", g.user['username'])
+                flash("Action Plan (Material) updated successfully!", "success")
+                return redirect(url_for("start.action_plan", project_id=project_id, project_detail_id=action_plan_project_detail_id))
+
+            except Exception as e:
+                db.rollback()
+                logger_register(f"Error updating action plan with id {action_plan_id} in database: {e}", g.user['username'])
+                flash("An error occurred while updating the Action Plan.", "danger")
+
+    action_plan = db.execute(
+        'SELECT * FROM action_plan WHERE id = ?',
+        (action_plan_id,)
+    ).fetchone()
+
+    metrics = db.execute(
+        'SELECT * FROM metrics'
+    ).fetchall()
+
+    managers = db.execute(
+    "SELECT * FROM user WHERE role != 'admin' and project = ?", (project_id,)
+    ).fetchall()
+
+    return render_template("/start/manager/action_plan_modify_material.html", action_plan=action_plan, metrics=metrics, managers=managers)

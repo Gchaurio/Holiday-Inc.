@@ -114,12 +114,9 @@
               <td>{{ project_detail.ammount }}</td>
               <td>{{ project_detail.obs }}</td>
               <td>
-                <form method="POST">
-                  <input type="hidden" name="project_id" value="{{ project_detail.project_id }}">
-                  <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#budgetModal">
+                  <a href="/start/manager/action_plan.html?project_detail_id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-primary btn-sm">
                       Budget
-                  </button>
-              </form>
+                  </a>
                   <a href="/start/manager/modify_project.html?id={{ project_detail.id }}&project_id={{ project_detail.project_id }}" class="btn btn-info btn-sm">
                       Modify
                   </a>

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="#">Tools:</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="approve">Approve and Assign Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="create_user">Create and Manage Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="modify_users.html">Modify or Delete Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/start/analist/client_register.html">Client Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/start/admin/logger.html">Logger</a>
+        </li>
+        
+      </ul>
+      <ul class="navbar-nav ml-auto">        <li class="nav-item">
+          <a class="nav-link">Logged as: {{ g.user['role'] }}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<h1>Create Metric</h1>
+		<form method="POST">
+			<div class="form-group">
+				<label for="dimentions">Dimentions:</label>
+				<input type="number" class="form-control" id="dimentions" name="dimentions" required>
+			</div>
+			<div class="form-group">
+				<label for="unit">Units:</label>
+				<input type="text" class="form-control" id="unit" name="unit" required>
+			</div>
+			<button type="submit" class="btn btn-primary">Add Metric</button>
+		</form>
+	</div>
+
+    <div class="container">
+    <h2>Existing metrics</h2>
+    <form method="GET" class="form-inline">
+        <div class="form-group">
+            <label for="search">Search by units:</label>
+            <input type="text" class="form-control" id="search" name="search" value="{{ request.args.get('search') }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <br>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Dimentions</th>
+            <th>Units</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for metric in metrics %}
+            {% if request.args.get('search') is not none and request.args.get('search') in metric.units %}
+            <tr>
+              <td>{{ metric.id }}</td>
+              <td>{{ metric.dimentions }}</td>
+              <td>{{ metric.units }}</td>
+              <td>
+                  <a href="/start/admin/modify_metrics.html?id={{ metric.id }}" class="btn btn-primary btn-sm">
+                      &#x1F589; Modify
+                  </a>
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ metric.id }}">Delete</button>
+                  </form>
+              </td>
+          </tr>
+            {% endif %}
+
+            {% if request.args.get('search') is none %}
+            tr>
+              <td>{{ metric.id }}</td>
+              <td>{{ metric.dimentions }}</td>
+              <td>{{ metric.units }}</td>
+              <td>
+                  <a href="/start/admin/modify_metrics.html?id={{ metric.id }}" class="btn btn-primary btn-sm">
+                      &#x1F589; Modify
+                  </a>
+                  <form method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm" type="submit" name="delete" value="{{ metric.id }}">Delete</button>
+                  </form>
+              </td>
+          </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

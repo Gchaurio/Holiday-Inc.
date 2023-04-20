@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS client;
 DROP TABLE IF EXISTS car;
 DROP TABLE IF EXISTS department;
 DROP TABLE IF EXISTS project_info;
+DROP TABLE IF EXISTS metrics;
+DROP TABLE IF EXISTS action_plan;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,4 +73,28 @@ CREATE TABLE project_info(
   solution TEXT NOT NULL,
   ammount REAL NOT NULL,
   obs TEXT
+);
+
+CREATE TABLE metrics(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  dimentions INTEGER NOT NULL,
+  units TEXT NOT NULL
+);
+
+CREATE TABLE action_plan(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_info_id INTEGER NOT NULL,
+  action TEXT NOT NULL,
+  activity TEXT NOT NULL,
+  init DATE NOT NULL,
+  end DATE NOT NULL,
+  category TEXT NOT NULL,
+  material TEXT NOT NULL,
+  metric INTEGER NOT NULL,
+  human_quantity INTEGER NOT NULL,
+  hours_quantity INTEGER NOT NULL,
+  material_quantity INTEGER NOT NULL,
+  responsable TEXT NOT NULL,
+  human_ammount REAL NOT NULL,
+  material_ammount REAL NOT NULL
 );

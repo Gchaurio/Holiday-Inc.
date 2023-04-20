@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        {% if g.user['role'] == 'admin' %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/start/admin/create_project">Manage Projects</a>
+            </li>
+        </ul>
+        {% endif %}
+        {% if g.user['role'] == 'Gerente de Operaciones' %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="create_project">Manage Projects</a>
+            </li>
+        </ul>
+        {% endif %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link">Logged as: {{ g.user['role'] }}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+    <h1>Modify Human Action Plan </h1>
+    <form method="POST">
+		<div class="form-group">
+			<label for="action">Action:</label>
+			<input type="text" class="form-control" id="action" name="action" value="{{action_plan.action}}" required>
+		</div>
+		<div class="form-group">
+			<label for="activity">Activity:</label>
+			<input type="text" class="form-control" id="activity" name="activity" value="{{action_plan.activity}}" required>
+		</div>
+        <div class="form-group">
+            <label for="responsable">Responsable:</label>
+            <select class="form-control" name="responsable">
+              {% for manager in managers %}
+                <option value="{{ manager.id }}">
+                  {{ manager.role }} - {{ manager.firstname }} {{ manager.lastname }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+		<div class="form-group">
+			<label for="human_quantity">Personnel Amount:</label>
+			<input type="number" class="form-control" id="human_quantity" name="human_quantity" value="{{action_plan.human_quantity}}" required>
+		</div>
+		<div class="form-group">
+			<label for="hours_quantity">Hours Quantity:</label>
+			<input type="number" class="form-control" id="hours_quantity" name="hours_quantity" value="{{action_plan.hours_quantity}}" required>
+		</div>
+		<div class="form-group">
+			<label for="human_amount">Payment per hour ($):</label>
+			<input type="number" class="form-control" id="human_amount" name="human_amount" required>
+		</div>
+		<input type="hidden" name="update_human" value="None">
+		<button type="submit" class="btn btn-primary">Update Action Plan</button>
+	</form>
+</div>
+{% endblock %}
