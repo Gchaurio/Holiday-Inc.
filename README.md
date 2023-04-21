@@ -1,7 +1,7 @@
 # Flask Login App
 
-# Miguel Perez, 15-11126
-# Gabriel Chaurio, 17-10126
+# Miguel Perez, 15-11126, miguepersa@gmail.com 
+# Gabriel Chaurio, 17-10126, chauriogabriel@gmail.com
 
 
 # Activar el venv con 'source ./bin/activate'
